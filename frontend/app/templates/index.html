@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCWebSockets</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.0/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js"></script>
+
+
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
+
+</head>
+
+
+
+
+<body class="light-blue darken-1">
+
+
+
+
+    <div class="row">
+        <div class="col s12 m12 l12 center">
+            <h1 class="white-text">Test Celery-Rabbitmq-Websockets</h1>
+        </div>
+    </div>
+
+    <div class="row formulario_ingreso">
+        <div class="col s8 m6 14 offset-s2 offset-m3 offset-14 white z-depth-5">
+            <form action="">
+                <div class="row">
+                    <div class="col s12 m12 l12 center">
+                        <p><b>Ingrese Número 1:</b></p>
+                        <input type="number" id="x" name="center" placeholder="X" required>
+                    </div>
+                    <div class="col s12 m12 l12 center">
+                        <p><b>Ingrese Número 2:</b></p>
+                        <input id="y" type="number" name="center" placeholder="Y" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12 m12 l12 center">
+                        <button type="submit" class="btn blue-grey darken-4 m-open" m-open="canvas">Sumar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+    <br>
+    <br>
+    <div class="row">
+        <div class="m-modal" m-modal="canvas">
+            <h4>Sumas</h1>
+                <div class="m-body ">
+                    <div class="row">
+                        <div class="col s4 m4 l4" id="sumas">
+
+                        </div>
+                        <div class="col s8 m8 l8" id="canvas">
+                        </div>
+
+                    </div>
+                </div>
+
+
+        </div>
+
+    </div>
+
+
+
+
+
+    <script type="text/javascript">
+
+        xp = 15
+        yp = 15
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        let sumas = [];
+        result = "";
+
+
+
+        $(document).ready(function () {
+            $('form').on('submit', function (e) {
+                e.preventDefault();
+
+                var x = $('#x').val();
+                var y = $('#y').val();
+
+                n = {
+                    x: x,
+                    y: y,
+                    xp: xp,
+                    yp: yp,
+                    status: "PENDING",
+                    result: -1
+                }
+                $('button').trigger('click');
+
+                yp = yp + 20
+
+                socket.emit('sendTask', n);
+            });
+
+            /*
+            socket.on('result', function (data) {
+                result = data;
+            });
+
+            */
+
+            socket.on('tasks', function (data) {
+                sumas = data;
+            });
+
+        })
+        function setup() {
+            c = createCanvas(500, 500)
+            c.parent('canvas');
+
+        }
+
+        function draw() {
+
+            $.each(sumas, function (index, s) {
+
+                textSize(20);
+                text(s.x + ' + ' + s.y, s.xp, s.yp);
+            });
+
+
+            $.each(result, function (index, r) {
+
+                textSize(30);
+                text(r,20,20);
+            });
+
+
+        }
+    </script>
+
+
+
+</body>
+
+</html>
