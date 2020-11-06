@@ -1,7 +1,7 @@
 
 from celery.utils.log import get_task_logger
 import time
-from celery_config import celery_app
+from backend_2.celery_config import celery_app
 
 logger = get_task_logger(__name__)
 #acks_late=True
@@ -70,7 +70,7 @@ def add(x, y):
 
     #Finish work
     # Send results to consumer
-    server = RabbitmqConfigure(queue='results',host='localhost', routingKey = 'results',exchange='default')
+    server = RabbitmqConfigure(queue='results',host='localhost', routingKey = 'results',exchange='')
     with RabbitMq(server) as rabbitmq:
         rabbitmq.publish(payload={"Result":res})
         

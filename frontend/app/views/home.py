@@ -60,11 +60,9 @@ def test_connect():
     print('connected')
 
 
-
-
 """
 @socketio.on('connect')
-def connect():    
+def connect():  
 
     print("Usuario Conectado!!!")
 
